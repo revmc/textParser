@@ -37,48 +37,7 @@ window.textParser = window.textParser || {};
 
 	}
 
-	window.textParser.parseText = function(inputJSON) {
-
-		var inputObject = JSON.parse(inputJSON);
-
-		var paragraphText = inputObject.paragraph;
-
-		var diffDays = getTimeDuration(paragraphText);
-
-		// START DATE PARSING
-
-		// var datePattern = /(0[1-9]|1[0-2])[\/](0[1-9]|[12]\d|3[01])[\/](19|20)\d{2}/g;
-
-		// var dateMatchArray = paragraphText.match(datePattern);
-
-		// var diffDays = 0;
-
-		// if (dateMatchArray) {
-
-		// 	// convert text dates to date objects
-		// 	var arrDates = dateMatchArray.map(function(value, index, arr) {
-		// 		return new Date(value);
-		// 	});
-
-		// 	// sort date array into ascending order
-		// 	arrDates.sort(function (date1, date2) {
-		// 		if (date1 > date2) return 1;
-		// 		if (date1 < date2) return -1;
-		// 		return 0;
-		// 	});
-
-		// 	var earliestDate = arrDates[0]; // first array element
-		// 	var latestDate = arrDates[(arrDates.length - 1)]; // last array element
-
-		// 	var timeDiff = Math.abs(latestDate.getTime() - earliestDate.getTime());
-
-		// 	diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // + 1 because this is inclusive of the given dates
-
-		// }
-
-		// END DATE PARSING
-
-		// START GENDER PARSING
+	function getGender(paragraphText) {
 
 		var gender = 'unknown';
 
@@ -111,9 +70,11 @@ window.textParser = window.textParser || {};
 
 		}
 
-		// END GENDER PARSING
+		return gender;
 
-		// START SENTIMENT PARSING
+	}
+
+	function getSentiment(paragraphText) {
 
 		var sentiment = 'unknown';
 
@@ -135,23 +96,35 @@ window.textParser = window.textParser || {};
 			sentiment = 'mixed';
 		}
 
-		// END SENTIMENT PARSING
+		return sentiment;
 
+	}
+
+	window.textParser.parseText = function(inputJSON) {
+
+		// convert JSON input to an object
+		var inputObject = JSON.parse(inputJSON);
+
+		var paragraphText = inputObject.paragraph;
+
+		var diffDays = getTimeDuration(paragraphText);
+
+		var gender = getGender(paragraphText);
+
+		var sentiment = getSentiment(paragraphText);
 		
+		// create an object to hold all the return values
 		var returnObj = {
 			timeDuration: diffDays,
 			gender: gender,
 			sentiment: sentiment
 		};
 
+		// convert the object with the return values to JSON
 		var returnJSON = JSON.stringify(returnObj);
 
 		return(returnJSON);
 
-	};
-
-	window.textParser.init = function() {
-		document.getElementById('add').addEventListener('click', parseText);
 	};
 
 })();
